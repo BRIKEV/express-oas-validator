@@ -22,6 +22,9 @@ const validateMiddleware = () => (req, res, next) => {
       endpoint,
       requestBody,
     } = getParameters(req);
+
+    // TODO: add required validator
+
     const validateParams = paramsValidator(endpoint, method);
 
     const paramsKeys = getKeys(req.params);
@@ -30,10 +33,12 @@ const validateMiddleware = () => (req, res, next) => {
     const queryKeys = getKeys(req.query);
     validateParams(req.query, queryKeys, instance.validateQueryParam);
 
+    if (Object.keys(requestBody).length > 0) {
+      instance.validateRequest(requestBody, endpoint, method, contentType);
+    }
+
     const headersKeys = getKeys(req.headers);
     validateParams(req.headers, headersKeys, instance.validateHeaderParam);
-
-    instance.validateRequest(requestBody, endpoint, method, contentType);
 
     return next();
   } catch (error) {

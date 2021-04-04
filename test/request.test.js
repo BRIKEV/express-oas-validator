@@ -9,7 +9,7 @@ describe('Body request tests', () => {
     request = supertest(app);
   });
 
-  it('should throw error when required request is not being send', () => (
+  it.skip('should throw error when required request is not being send', () => (
     request
       .post('/api/v1/songs')
       .set('Content-Type', 'application/json')

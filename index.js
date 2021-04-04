@@ -1,4 +1,4 @@
-
+const openapiValidatorUtils = require('openapi-validator-utils');
 
 /**
  * @name ValidateRequest
@@ -38,6 +38,8 @@
  * @property {ValidateResponse} validateResponse
  */
 
+let instance;
+
 /**
  * Validate method
  * @param {object} openApiDef OpenAPI definition
@@ -45,14 +47,29 @@
  * @returns {ValidatorMethods} validator methods
  */
 const validate = (openApiDef, options = {}) => {
+  let specDefinition = openApiDef;
+  instance = openApiDef;
+  if (!options.multiple && instance) {
+    specDefinition = instance;
+  }
+  const ValidatorUtils = openapiValidatorUtils(specDefinition, options);
 
+  const validateMiddleware = (req, res, next) => (validationOptions) => {
+    // TODO: get path, body, headers and query
+
+    // TODO: format endpoints with path params
+
+    // TODO: Use 4 validators based on the options
+  };
 
   return {
     validateMiddleware,
-    validateRequest,
-    validateQueryParam,
-    validatePathParam,
-    validateHeaderParam,
-    validateResponse,
+    validateRequest: ValidatorUtils.validateRequest,
+    validateQueryParam: ValidatorUtils.validateQueryParam,
+    validatePathParam: ValidatorUtils.validatePathParam,
+    validateHeaderParam: ValidatorUtils.validateHeaderParam,
+    validateResponse: ValidatorUtils.validateResponse,
   };
-}
+};
+
+module.exports = validate;

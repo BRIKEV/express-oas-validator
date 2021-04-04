@@ -9,11 +9,18 @@ const paramsValidator = (endpoint, method) => (payload, keys, validate) => {
   });
 };
 
+const formatURL = req => {
+  const params = Object.keys(req.params);
+  return params.reduce((acum, param) => (
+    acum.replace(`:${param}`, `{${param}}`)
+  ), req.route.path);
+};
+
 const getParameters = req => {
   const contentType = req.headers['content-type'] || 'application/json';
   const method = req.method.toLowerCase();
   // eslint-disable-next-line no-underscore-dangle
-  const endpoint = req._parsedUrl.path;
+  const endpoint = formatURL(req);
   const requestBody = req.body;
   return {
     contentType,

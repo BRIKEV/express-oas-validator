@@ -22,21 +22,25 @@ const validateMiddleware = () => (req, res, next) => {
       endpoint,
       requestBody,
     } = getParameters(req);
-    instance.validateRequest(requestBody, endpoint, method, contentType);
     const validateParams = paramsValidator(endpoint, method);
-    const queryKeys = getKeys(req.query);
-    validateParams(req.query, queryKeys, instance.validateQueryParam);
+
     const paramsKeys = getKeys(req.params);
     validateParams(req.params, paramsKeys, instance.validatePathParam);
+
+    const queryKeys = getKeys(req.query);
+    validateParams(req.query, queryKeys, instance.validateQueryParam);
+
     const headersKeys = getKeys(req.headers);
     validateParams(req.headers, headersKeys, instance.validateHeaderParam);
 
+    instance.validateRequest(requestBody, endpoint, method, contentType);
+
     return next();
   } catch (error) {
+    error.status = 400;
     if (error.message.includes('Missing header')) {
       return next();
     }
-    error.status = 400;
     return next(error);
   }
 };

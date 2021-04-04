@@ -54,6 +54,18 @@ const serverApp = () => new Promise(resolve => {
    */
   app.post('/api/v1/name', (req, res) => res.send('Hello World!'));
 
+  /**
+   * GET /api/v1/albums/{id}
+   * @summary This is the summary or description of the endpoint
+   * @param {string} id.path.required
+   * @return {object} 200 - success response - application/json
+   */
+  app.get('/api/v1/albums/:id', validateMiddleware(), (req, res) => (
+    res.json([{
+      title: 'abum 1',
+    }])
+  ));
+
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
     res.status(err.status).json(err);

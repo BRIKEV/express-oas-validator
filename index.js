@@ -45,11 +45,11 @@
  * @returns {ValidatorMethods} validator methods
  */
 const validate = (openApiDef, options = {}) => {
-  
+
 
   return {
     validateMiddleware,
-    validateRequest
+    validateRequest,
     validateQueryParam,
     validatePathParam,
     validateHeaderParam,

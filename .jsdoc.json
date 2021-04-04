@@ -1,19 +1,18 @@
 {
   "opts": {
     "destination": "./docs",
-    "template": "node_modules/better-docs"
+    "template": "node_modules/tui-jsdoc-template"
   },
   "source": {
     "includePattern": ".+\\.js(doc|x)?$",
     "excludePattern": ".*\/(node_modules|test)\/*"
   },
   "templates": {
+    "title": "express-oas-validator",
+    "footerText": "Express OpenAPI Specification (OAS) middleware validator",
+    "name": "express-oas-validator",
     "default": {
       "outputSourceFiles": false
-    },
-    "better-docs": {
-      "title": "express-oas-validator",
-      "name": "express-oas-validator"
     }
   }
 }

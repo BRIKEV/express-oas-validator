@@ -1,7 +1,7 @@
 const supertest = require('supertest');
 const serverApp = require('./fake-server');
 
-describe.only('Path params tests', () => {
+describe('Path params tests', () => {
   let request;
 
   beforeAll(async () => {

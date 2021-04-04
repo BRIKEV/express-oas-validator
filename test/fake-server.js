@@ -66,6 +66,19 @@ const serverApp = () => new Promise(resolve => {
     }])
   ));
 
+  /**
+   * GET /api/v1/authors
+   * @summary This is the summary or description of the endpoint
+   * @param {string} name.query.required - name param description - enum:type1,type2
+   * @param {array<string>} license.query - name param description
+   * @return {object} 200 - success response - application/json
+   */
+  app.get('/api/v1/authors', validateMiddleware(), (req, res) => (
+    res.json([{
+      title: 'abum 1',
+    }])
+  ));
+
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
     res.status(err.status).json(err);

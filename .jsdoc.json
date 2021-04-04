@@ -1,0 +1,19 @@
+{
+  "opts": {
+    "destination": "./docs",
+    "template": "node_modules/better-docs"
+  },
+  "source": {
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": ".*\/(node_modules|test)\/*"
+  },
+  "templates": {
+    "default": {
+      "outputSourceFiles": false
+    },
+    "better-docs": {
+      "title": "express-oas-validator",
+      "name": "express-oas-validator"
+    }
+  }
+}

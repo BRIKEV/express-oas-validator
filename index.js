@@ -45,4 +45,18 @@ const validateMiddleware = () => (req, res, next) => {
   }
 };
 
-module.exports = { init, validateMiddleware };
+const responseValidation = (payload, status, req) => {
+  try {
+    const {
+      contentType,
+      method,
+      endpoint,
+    } = getParameters(req);
+    return instance.validateResponse(payload, endpoint, method, status, contentType);
+  } catch (error) {
+    error.status = 500;
+    throw error;
+  }
+};
+
+module.exports = { init, validateMiddleware, responseValidation };

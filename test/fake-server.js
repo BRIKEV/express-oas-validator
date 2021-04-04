@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const expressJSDocSwagger = require('express-jsdoc-swagger');
-const { init, validateMiddleware } = require('..');
+const { init, validateMiddleware, responseValidation } = require('..');
 
 const options = {
   info: {
@@ -52,7 +52,28 @@ const serverApp = () => new Promise(resolve => {
    * @param {string} request.body.required - name body description
    * @return {object} 200 - song response
    */
-  app.post('/api/v1/name', (req, res) => res.send('Hello World!'));
+  app.post('/api/v1/name', (req, res, next) => {
+    try {
+      responseValidation('Error string', 200, req);
+      return res.send('Hello World!');
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  /**
+   * POST /api/v2/name
+   * @param {string} request.body.required - name body description
+   * @return {Song} 200 - song response
+   */
+  app.post('/api/v2/name', (req, res, next) => {
+    try {
+      responseValidation('Error string', 200, req);
+      return res.send('Hello World!');
+    } catch (error) {
+      return next(error);
+    }
+  });
 
   /**
    * GET /api/v1/albums/{id}

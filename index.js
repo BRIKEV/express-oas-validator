@@ -5,6 +5,7 @@ const {
   getParameters,
   paramsArray,
 } = require('./utils');
+const getConfig = require('./utils/config');
 
 let instance = null;
 
@@ -15,29 +16,34 @@ const init = (openApiDef, options = {}) => {
   return instance;
 };
 
-const validateMiddleware = () => (req, res, next) => {
+const validateMiddleware = endpointConfig => (req, res, next) => {
   try {
+    const config = getConfig(endpointConfig);
     const {
       contentType,
       method,
       endpoint,
       requestBody,
     } = getParameters(req);
-
-    const paramsToValidate = paramsArray(req);
-    instance.validateRequiredValues(paramsToValidate, endpoint, method);
-
     const validateParams = paramsValidator(endpoint, method);
 
-    const queryKeys = getKeys(req.query);
-    validateParams(req.query, queryKeys, instance.validateQueryParam);
+    if (config.required) {
+      const paramsToValidate = paramsArray(req);
+      instance.validateRequiredValues(paramsToValidate, endpoint, method);
+    }
+    if (config.query) {
+      const queryKeys = getKeys(req.query);
+      validateParams(req.query, queryKeys, instance.validateQueryParam);
+    }
 
-    if (Object.keys(requestBody).length > 0) {
+    if (Object.keys(requestBody).length > 0 && config.body) {
       instance.validateRequest(requestBody, endpoint, method, contentType);
     }
 
-    const headersKeys = getKeys(req.headers);
-    validateParams(req.headers, headersKeys, instance.validateHeaderParam);
+    if (config.headers) {
+      const headersKeys = getKeys(req.headers);
+      validateParams(req.headers, headersKeys, instance.validateHeaderParam);
+    }
 
     return next();
   } catch (error) {

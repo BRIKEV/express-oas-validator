@@ -36,7 +36,7 @@ const validateMiddleware = endpointConfig => (req, res, next) => {
       validateParams(req.query, queryKeys, instance.validateQueryParam);
     }
 
-    if (Object.keys(requestBody).length > 0 && config.body) {
+    if (instance.isRequestRequired(endpoint, method, contentType) && config.body) {
       instance.validateRequest(requestBody, endpoint, method, contentType);
     }
 

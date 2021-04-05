@@ -33,6 +33,18 @@ describe('Query params tests', () => {
       })
   ));
 
+  it('should throw error when query param is required', () => (
+    request
+      .get('/api/v1/authors')
+      .expect(400)
+      .then(response => {
+        expect(response.body.name).toEqual('OpenAPIUtilsError');
+        expect(response.body.message).toEqual(
+          'Required error: name query param is required.',
+        );
+      })
+  ));
+
   it('should not throw error when query param is valid', () => (
     request
       .get('/api/v1/authors?name=type1')

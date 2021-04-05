@@ -3,6 +3,7 @@ const {
   getKeys,
   paramsValidator,
   getParameters,
+  paramsArray,
 } = require('./utils');
 
 let instance = null;
@@ -23,12 +24,10 @@ const validateMiddleware = () => (req, res, next) => {
       requestBody,
     } = getParameters(req);
 
-    // TODO: add required validator
+    const paramsToValidate = paramsArray(req);
+    instance.validateRequiredValues(paramsToValidate, endpoint, method);
 
     const validateParams = paramsValidator(endpoint, method);
-
-    const paramsKeys = getKeys(req.params);
-    validateParams(req.params, paramsKeys, instance.validatePathParam);
 
     const queryKeys = getKeys(req.query);
     validateParams(req.query, queryKeys, instance.validateQueryParam);

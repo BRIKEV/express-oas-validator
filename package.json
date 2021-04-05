@@ -52,6 +52,6 @@
     "tui-jsdoc-template": "^1.2.2"
   },
   "dependencies": {
-    "openapi-validator-utils": "^1.0.0"
+    "openapi-validator-utils": "git+https://github.com/BRIKEV/openapi-validator-utils.git"
   }
 }

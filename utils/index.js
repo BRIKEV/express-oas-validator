@@ -30,8 +30,19 @@ const getParameters = req => {
   };
 };
 
+const formatParam = paramObject => paramKey => ({
+  [paramKey]: paramObject[paramKey],
+});
+
+const paramsArray = req => ([
+  ...Object.keys(req.query).map(formatParam(req.query)),
+  ...Object.keys(req.params).map(formatParam(req.params)),
+  ...Object.keys(req.headers).map(formatParam(req.headers)),
+]);
+
 module.exports = {
   getKeys,
   paramsValidator,
   getParameters,
+  paramsArray,
 };

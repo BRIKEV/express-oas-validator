@@ -3,7 +3,9 @@ const {
   getKeys,
   paramsValidator,
   getParameters,
+  paramsArray,
 } = require('./utils');
+const getConfig = require('./utils/config');
 
 let instance = null;
 
@@ -14,31 +16,57 @@ const init = (openApiDef, options = {}) => {
   return instance;
 };
 
-const validateMiddleware = () => (req, res, next) => {
+const validateMiddleware = endpointConfig => (req, res, next) => {
   try {
+    const config = getConfig(endpointConfig);
     const {
       contentType,
       method,
       endpoint,
       requestBody,
     } = getParameters(req);
-    instance.validateRequest(requestBody, endpoint, method, contentType);
     const validateParams = paramsValidator(endpoint, method);
-    const queryKeys = getKeys(req.query);
-    validateParams(req.query, queryKeys, instance.validateQueryParam);
-    const paramsKeys = getKeys(req.params);
-    validateParams(req.params, paramsKeys, instance.validatePathParam);
-    const headersKeys = getKeys(req.headers);
-    validateParams(req.headers, headersKeys, instance.validateHeaderParam);
+
+    if (config.required) {
+      const paramsToValidate = paramsArray(req);
+      instance.validateRequiredValues(paramsToValidate, endpoint, method);
+    }
+    if (config.query) {
+      const queryKeys = getKeys(req.query);
+      validateParams(req.query, queryKeys, instance.validateQueryParam);
+    }
+
+    if (instance.isRequestRequired(endpoint, method, contentType) && config.body) {
+      instance.validateRequest(requestBody, endpoint, method, contentType);
+    }
+
+    if (config.headers) {
+      const headersKeys = getKeys(req.headers);
+      validateParams(req.headers, headersKeys, instance.validateHeaderParam);
+    }
 
     return next();
   } catch (error) {
+    error.status = 400;
     if (error.message.includes('Missing header')) {
       return next();
     }
-    error.status = 400;
     return next(error);
   }
 };
 
-module.exports = { init, validateMiddleware };
+const responseValidation = (payload, status, req) => {
+  try {
+    const {
+      contentType,
+      method,
+      endpoint,
+    } = getParameters(req);
+    return instance.validateResponse(payload, endpoint, method, status, contentType);
+  } catch (error) {
+    error.status = 500;
+    throw error;
+  }
+};
+
+module.exports = { init, validateMiddleware, responseValidation };

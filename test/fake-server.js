@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const expressJSDocSwagger = require('express-jsdoc-swagger');
-const { init, validateMiddleware } = require('..');
+const { init, validateMiddleware, responseValidation } = require('..');
 
 const options = {
   info: {
@@ -52,7 +52,53 @@ const serverApp = () => new Promise(resolve => {
    * @param {string} request.body.required - name body description
    * @return {object} 200 - song response
    */
-  app.post('/api/v1/name', (req, res) => res.send('Hello World!'));
+  app.post('/api/v1/name', (req, res, next) => {
+    try {
+      responseValidation('Error string', 200, req);
+      return res.send('Hello World!');
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  /**
+   * POST /api/v2/name
+   * @param {string} request.body.required - name body description
+   * @return {Song} 200 - song response
+   */
+  app.post('/api/v2/name', (req, res, next) => {
+    try {
+      responseValidation('Error string', 200, req);
+      return res.send('Hello World!');
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  /**
+   * GET /api/v1/albums/{id}
+   * @summary This is the summary or description of the endpoint
+   * @param {string} id.path.required
+   * @return {object} 200 - success response - application/json
+   */
+  app.get('/api/v1/albums/:id', validateMiddleware(), (req, res) => (
+    res.json([{
+      title: 'abum 1',
+    }])
+  ));
+
+  /**
+   * GET /api/v1/authors
+   * @summary This is the summary or description of the endpoint
+   * @param {string} name.query.required - name param description - enum:type1,type2
+   * @param {array<string>} license.query - name param description
+   * @return {object} 200 - success response - application/json
+   */
+  app.get('/api/v1/authors', validateMiddleware(), (req, res) => (
+    res.json([{
+      title: 'abum 1',
+    }])
+  ));
 
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {

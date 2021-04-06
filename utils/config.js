@@ -6,6 +6,9 @@ const DEFAULT_CONFIG = {
   required: true,
 };
 
+/**
+ * @param {object} config
+ */
 const getConfig = config => {
   if (!config || Object.keys(config).length === 0) return DEFAULT_CONFIG;
   return {

@@ -9,6 +9,18 @@ const getConfig = require('./utils/config');
 
 let instance = null;
 
+/**
+ * Validator methods
+ * @typedef {object} Options
+ * @property {function()} errorHandler custom error handler
+ * @property {object} ajvConfig Ajv config object
+ */
+
+/**
+ * Init method to instantiate the OpenAPI validator
+ * @param {object} openApiDef OpenAPI definition
+ * @param {Options} options Options to extend the errorHandler or Ajv configuration
+ */
 const init = (openApiDef, options = {}) => {
   if (instance === null) {
     instance = openapiValidatorUtils(openApiDef, options);
@@ -16,6 +28,20 @@ const init = (openApiDef, options = {}) => {
   return instance;
 };
 
+/**
+ * Validator methods
+ * @typedef {object} EndpointConfig
+ * @property {boolean} body custom error handler
+ * @property {boolean} params Ajv config object
+ * @property {boolean} headers Ajv config object
+ * @property {boolean} query Ajv config object
+ * @property {boolean} required Ajv config object
+ */
+
+/**
+ * Endpoint configuration
+ * @param {EndpointConfig} endpointConfig middleware validator options
+ */
 const validateMiddleware = endpointConfig => (req, res, next) => {
   try {
     const config = getConfig(endpointConfig);
@@ -55,7 +81,13 @@ const validateMiddleware = endpointConfig => (req, res, next) => {
   }
 };
 
-const responseValidation = (payload, status, req) => {
+/**
+ * Method to validate response payload
+ * @param {*} payload response we want to validate
+ * @param {object} req express request object
+ * @param {number} status response status we want to validate
+ */
+const responseValidation = (payload, req, status = 200) => {
   try {
     const {
       contentType,

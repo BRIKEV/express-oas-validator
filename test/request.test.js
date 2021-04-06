@@ -55,4 +55,11 @@ describe('Body request tests', () => {
       .send({ title: 'valid title' })
       .expect(200)
   ));
+
+  it('should not throw error when middleware options are disabled', () => (
+    request
+      .post('/api/v1/albums')
+      .send({ title: 'valid title' })
+      .expect(200)
+  ));
 });

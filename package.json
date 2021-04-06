@@ -53,5 +53,15 @@
   },
   "dependencies": {
     "openapi-validator-utils": "^1.0.1"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "**/*.js",
+      "!**/*.config.js",
+      "!**/node_modules/**",
+      "!**/test/**",
+      "!**/coverage/**",
+      "!**/docs/**"
+    ]
   }
 }

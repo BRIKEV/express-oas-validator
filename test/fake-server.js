@@ -54,7 +54,7 @@ const serverApp = () => new Promise(resolve => {
    */
   app.post('/api/v1/name', (req, res, next) => {
     try {
-      responseValidation('Error string', 200, req);
+      responseValidation('Error string', req);
       return res.send('Hello World!');
     } catch (error) {
       return next(error);
@@ -68,7 +68,7 @@ const serverApp = () => new Promise(resolve => {
    */
   app.post('/api/v2/name', (req, res, next) => {
     try {
-      responseValidation('Error string', 200, req);
+      responseValidation('Error string', req, 200);
       return res.send('Hello World!');
     } catch (error) {
       return next(error);

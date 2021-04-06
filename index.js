@@ -81,7 +81,13 @@ const validateMiddleware = endpointConfig => (req, res, next) => {
   }
 };
 
-const responseValidation = (payload, status, req) => {
+/**
+ * Method to validate response payload
+ * @param {*} payload response we want to validate
+ * @param {object} req express request object
+ * @param {number} status response status we want to validate
+ */
+const responseValidation = (payload, req, status = 200) => {
   try {
     const {
       contentType,

@@ -45,7 +45,13 @@ const serverApp = () => new Promise(resolve => {
    * @param {array<Song>} request.body.required
    * @return {object} 200 - song response
    */
-  app.post('/api/v1/albums', (req, res) => res.send('Hello World!'));
+  app.post('/api/v1/albums', validateMiddleware({
+    body: false,
+    params: false,
+    headers: false,
+    query: false,
+    required: false,
+  }), (req, res) => res.send('Hello World!'));
 
   /**
    * POST /api/v1/name

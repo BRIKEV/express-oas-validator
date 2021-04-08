@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Home | express-oas-validator</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="">
+        
+            <img src="img/toast-ui.png" width="100%" height="100%">
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">express-oas-validator</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+    <div class="lnb-api hidden"><h3>Global</h3><ul><li class="hidden"><a href="global.html#EndpointConfig">EndpointConfig</a></li><li><a href="global.html#init">init</a></li><li class="hidden"><a href="global.html#Options">Options</a></li><li><a href="global.html#responseValidation">responseValidation</a></li><li><a href="global.html#validateMiddleware">validateMiddleware</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section>
+        <article class="readme"><p><a href="https://github.com/BRIKEV/express-oas-validator/actions/workflows/runTests.yml"><img src="https://github.com/BRIKEV/express-oas-validator/actions/workflows/runTests.yml/badge.svg" alt="Build"></a>
+<a href="https://snyk.io/test/github/BRIKEV/express-oas-validator"><img src="https://snyk.io/test/github/BRIKEV/express-oas-validator/badge.svg" alt="Known Vulnerabilities"></a>
+<a href="https://codeclimate.com/github/BRIKEV/express-oas-validator/maintainability"><img src="https://api.codeclimate.com/v1/badges/13aa6d75c21855b8857c/maintainability" alt="Maintainability"></a>
+<a href="https://codeclimate.com/github/BRIKEV/express-oas-validator/test_coverage"><img src="https://api.codeclimate.com/v1/badges/13aa6d75c21855b8857c/test_coverage" alt="Test Coverage"></a>
+<img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></p>
+<h1>express-oas-validator</h1>
+<p>Express OpenAPI Specification (OAS) middleware validator and response validator.</p>
+<p>This package will expose an express middleware that will validate your endpoint based on your OpenAPI docs, and a response validator to do the same with your responses payload.</p>
+<h2>Installation</h2>
+<p>Install using the node package registry:</p>
+<pre class="prettyprint source"><code>npm install --save express-oas-validator
+</code></pre>
+<h2>Usage</h2>
+<p>This is a basic usage of this package.</p>
+<pre class="prettyprint source lang-js"><code>const express = require('express');
+// We recommed to install &quot;body-parser&quot; to validate request body
+const bodyParser = require('body-parser');
+const { init, validateMiddleware, responseValidation } = require('express-oas-validator');
+const swaggerDefinition = require('./swaggerDefinition.json');
+
+const app = express();
+
+init(swaggerDefinition);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// Middleware validator
+app.post('/api/v1/songs', validateMiddleware(), (req, res) => res.send('You save a song!'));
+
+// Middleware validator with custom configuration
+app.get('/api/v1/albums/:id', validateMiddleware({ headers: false }), (req, res) => (
+  res.json([{
+    title: 'abum 1',
+  }])
+));
+
+// Middleware validator with custom configuration
+app.get('/api/v1/authors', validateMiddleware({ body: false, query: false }), (req, res) => (
+  res.json([{
+    title: 'abum 1',
+  }])
+));
+
+// Response validator
+app.post('/api/v1/name', (req, res, next) => {
+  try {
+    responseValidation('Error string', req, 200);
+    return res.send('Hello World!');
+  } catch (error) {
+    return next(error);
+  }
+});
+
+// Express default error handler
+app.use((err, req, res, next) => {
+  res.status(err.status).json(err);
+});
+</code></pre>
+<h2>methods</h2>
+<h3>init(openApiDef, options)</h3>
+<p>This methods initiates the validator so that <code>validateMiddleware</code> and <code>responseValidation</code> can be used in different files.</p>
+<p><strong>Parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th style="text-align:center">Type</th>
+<th style="text-align:right">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>openApiDef</td>
+<td style="text-align:center">object</td>
+<td style="text-align:right">OpenAPI definition</td>
+</tr>
+<tr>
+<td>options</td>
+<td style="text-align:center">object</td>
+<td style="text-align:right">Options to extend the errorHandler or Ajv configuration</td>
+</tr>
+</tbody>
+</table>
+<pre class="prettyprint source lang-js"><code>const swaggerDefinition = require('./swaggerDefinition.json');
+
+init(swaggerDefinition);
+</code></pre>
+<h2>validateMiddleware(endpointConfig)</h2>
+<p>Express middleware that receives this configuration options and validates each of the options.</p>
+<pre class="prettyprint source lang-js"><code>const DEFAULT_CONFIG = {
+  body: true,
+  params: true,
+  headers: true,
+  query: true,
+  required: true,
+};
+</code></pre>
+<p><strong>Example</strong></p>
+<pre class="prettyprint source lang-js"><code>// This one uses the DEFAULT_CONFIG
+app.get('/api/v1/albums/:id', validateMiddleware(), (req, res) => (
+  res.json([{
+    title: 'abum 1',
+  }])
+));
+
+// With custom configuration
+app.get('/api/v1/albums/:id', validateMiddleware({ headers: false }), (req, res) => (
+  res.json([{
+    title: 'abum 1',
+  }])
+));
+</code></pre>
+<h2>responseValidation(payload, req, status)</h2>
+<p>Method to validate response payload based on the docs and the status we want to validate.</p>
+<p><strong>Parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th style="text-align:center">Type</th>
+<th style="text-align:right">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>payload</td>
+<td style="text-align:center">*</td>
+<td style="text-align:right">response we want to validate</td>
+</tr>
+<tr>
+<td>req</td>
+<td style="text-align:center">object</td>
+<td style="text-align:right">Options to extend the errorHandler or Ajv configuration</td>
+</tr>
+<tr>
+<td>status</td>
+<td style="text-align:center">number</td>
+<td style="text-align:right">esponse status we want to validate</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example</strong></p>
+<pre class="prettyprint source lang-js"><code>responseValidation('Error string', req, 200);
+</code></pre>
+<h2>Example with express-jsdoc-swagger</h2>
+<p>This is an example using <a href="https://www.npmjs.com/package/express-jsdoc-swagger">express-jsdoc-swagger</a>.</p>
+<pre class="prettyprint source lang-js"><code>const express = require('express');
+const bodyParser = require('body-parser');
+const expressJSDocSwagger = require('express-jsdoc-swagger');
+const { init, validateMiddleware, responseValidation } = require('express-oas-validator');
+
+const options = {
+  info: {
+    version: '1.0.0',
+    title: 'Albums store',
+    license: {
+      name: 'MIT',
+    },
+  },
+  filesPattern: './fake-server.js',
+  baseDir: __dirname,
+};
+
+const app = express();
+const instance = expressJSDocSwagger(app)(options);
+
+const serverApp = () => new Promise(resolve => {
+  instance.on('finish', data => {
+    init(data);
+    resolve(app);
+  });
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
+  /**
+   * A song
+   * @typedef {object} Song
+   * @property {string} title.required - The title
+   * @property {string} artist - The artist
+   * @property {integer} year - The year
+   */
+
+  /**
+   * POST /api/v1/songs
+   * @param {Song} request.body.required - song info
+   * @return {object} 200 - song response
+   */
+  app.post('/api/v1/songs', validateMiddleware(), (req, res) => res.send('You save a song!'));
+
+  /**
+   * POST /api/v1/name
+   * @param {string} request.body.required - name body description
+   * @return {object} 200 - song response
+   */
+  app.post('/api/v1/name', (req, res, next) => {
+    try {
+      responseValidation('Error string', req);
+      return res.send('Hello World!');
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  /**
+   * GET /api/v1/authors
+   * @summary This is the summary or description of the endpoint
+   * @param {string} name.query.required - name param description - enum:type1,type2
+   * @param {array&lt;string>} license.query - name param description
+   * @return {object} 200 - success response - application/json
+   */
+  app.get('/api/v1/authors', validateMiddleware({ headers: false }), (req, res) => (
+    res.json([{
+      title: 'abum 1',
+    }])
+  ));
+
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
+    res.status(err.status).json(err);
+  });
+});
+
+module.exports = serverApp;
+</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="img/toast-ui.png" style="">
+    <div class="footer-text">Express OpenAPI Specification (OAS) middleware validator</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = 'package:undefined_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

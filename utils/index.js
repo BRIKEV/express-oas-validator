@@ -69,9 +69,22 @@ const paramsArray = req => ([
   ...Object.keys(req.headers).map(formatParam(req.headers)),
 ]);
 
+const handleError = (error, errorStatusCode, next) => {
+  const errorObject = {
+    ...error,
+    status: errorStatusCode,
+    statusCode: errorStatusCode,
+  };
+  if (error.message.includes('Missing header')) {
+    return next();
+  }
+  return next(errorObject);
+};
+
 module.exports = {
   getKeys,
   paramsValidator,
   getParameters,
   paramsArray,
+  handleError,
 };

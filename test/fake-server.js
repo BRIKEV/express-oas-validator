@@ -43,6 +43,12 @@ const serverApp = () => new Promise(resolve => {
   app.post('/api/v1/songs', validateMiddleware(), (req, res) => res.send('You save a song!'));
 
   /**
+   * PATCH /api/v1/songs
+   * @return {object} 200 - song response
+   */
+  app.patch('/api/v1/songs', validateMiddleware(), (req, res) => res.send('You save a song!'));
+
+  /**
    * POST /api/v1/albums
    * @param {array<Song>} request.body.required
    * @return {object} 200 - song response

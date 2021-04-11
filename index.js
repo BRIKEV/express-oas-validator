@@ -43,8 +43,8 @@ const init = (openApiDef, options = {}) => {
  * @param {EndpointConfig} endpointConfig middleware validator options
  */
 const validateMiddleware = endpointConfig => (req, res, next) => {
+  const config = getConfig(endpointConfig);
   try {
-    const config = getConfig(endpointConfig);
     const {
       contentType,
       method,
@@ -73,7 +73,8 @@ const validateMiddleware = endpointConfig => (req, res, next) => {
 
     return next();
   } catch (error) {
-    error.status = 400;
+    error.status = config.errorStatusCode;
+    error.statusCode = config.errorStatusCode;
     if (error.message.includes('Missing header')) {
       return next();
     }
@@ -97,6 +98,7 @@ const responseValidation = (payload, req, status = 200) => {
     return instance.validateResponse(payload, endpoint, method, status, contentType);
   } catch (error) {
     error.status = 500;
+    error.statusCode = 500;
     throw error;
   }
 };

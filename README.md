@@ -99,6 +99,7 @@ const DEFAULT_CONFIG = {
   headers: true,
   query: true,
   required: true,
+  errorStatusCode: 400,
 };
 ```
 

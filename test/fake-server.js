@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const expressJSDocSwagger = require('express-jsdoc-swagger');
 const { init, validateMiddleware, responseValidation } = require('..');
 
@@ -23,8 +22,11 @@ const serverApp = () => new Promise(resolve => {
     init(data);
     resolve(app);
   });
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
+
+  // Add middleware to parse request body
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
+
   /**
    * A song
    * @typedef {object} Song

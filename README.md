@@ -145,7 +145,6 @@ This is an example using [express-jsdoc-swagger](https://www.npmjs.com/package/e
 
 ```js
 const express = require('express');
-const bodyParser = require('body-parser');
 const expressJSDocSwagger = require('express-jsdoc-swagger');
 const { init, validateMiddleware, responseValidation } = require('express-oas-validator');
 
@@ -169,8 +168,10 @@ const serverApp = () => new Promise(resolve => {
     init(data);
     resolve(app);
   });
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
+
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
+
   /**
    * A song
    * @typedef {object} Song

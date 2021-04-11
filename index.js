@@ -4,6 +4,7 @@ const {
   paramsValidator,
   getParameters,
   paramsArray,
+  handleError,
 } = require('./utils');
 const getConfig = require('./utils/config');
 
@@ -46,13 +47,9 @@ const validateMiddleware = endpointConfig => (req, res, next) => {
   const config = getConfig(endpointConfig);
   try {
     const {
-      contentType,
-      method,
-      endpoint,
-      requestBody,
+      contentType, method, endpoint, requestBody,
     } = getParameters(req);
     const validateParams = paramsValidator(endpoint, method);
-
     if (config.required) {
       const paramsToValidate = paramsArray(req);
       instance.validateRequiredValues(paramsToValidate, endpoint, method);
@@ -61,24 +58,16 @@ const validateMiddleware = endpointConfig => (req, res, next) => {
       const queryKeys = getKeys(req.query);
       validateParams(req.query, queryKeys, instance.validateQueryParam);
     }
-
     if (instance.isRequestRequired(endpoint, method, contentType) && config.body) {
       instance.validateRequest(requestBody, endpoint, method, contentType);
     }
-
     if (config.headers) {
       const headersKeys = getKeys(req.headers);
       validateParams(req.headers, headersKeys, instance.validateHeaderParam);
     }
-
     return next();
   } catch (error) {
-    error.status = config.errorStatusCode;
-    error.statusCode = config.errorStatusCode;
-    if (error.message.includes('Missing header')) {
-      return next();
-    }
-    return next(error);
+    return handleError(error, config.errorStatusCode, next);
   }
 };
 

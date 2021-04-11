@@ -9,7 +9,7 @@ describe('Body request tests', () => {
     request = supertest(app);
   });
 
-  it('should throw error when required request is not being send', () => (
+  it('should throw error when request is not being send and it was documented as required', () => (
     request
       .post('/api/v1/songs')
       .set('Content-Type', 'application/json')
@@ -20,6 +20,13 @@ describe('Body request tests', () => {
           'Error in request: Schema Song should have required property \'title\'. You provide "{}"',
         );
       })
+  ));
+
+  it('should not throw error when request is not being send and it was not documented', () => (
+    request
+      .patch('/api/v1/songs')
+      .set('Content-Type', 'application/json')
+      .expect(200)
   ));
 
   it('should throw error when request is not valid', () => (

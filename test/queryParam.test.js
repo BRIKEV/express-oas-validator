@@ -16,7 +16,7 @@ describe('Query params tests', () => {
       .then(response => {
         expect(response.body.name).toEqual('OpenAPIUtilsError');
         expect(response.body.message).toEqual(
-          'Error in query: should be equal to one of the allowed values: type1, type2. You provide "123"',
+          'Error in query: must be equal to one of the allowed values: type1, type2. You provide "123"',
         );
       })
   ));
@@ -28,7 +28,7 @@ describe('Query params tests', () => {
       .then(response => {
         expect(response.body.name).toEqual('OpenAPIUtilsError');
         expect(response.body.message).toEqual(
-          'Error in query: should be array. You provide "12"',
+          'Error in query: must be array. You provide "12"',
         );
       })
   ));

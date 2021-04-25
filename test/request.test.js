@@ -17,7 +17,7 @@ describe('Body request tests', () => {
       .then(response => {
         expect(response.body.name).toEqual('OpenAPIUtilsError');
         expect(response.body.message).toEqual(
-          'Error in request: Schema Song should have required property \'title\'. You provide "{}"',
+          'Error in request: Schema Song must have required property \'title\'. You provide "{}"',
         );
       })
   ));
@@ -38,7 +38,7 @@ describe('Body request tests', () => {
       .then(response => {
         expect(response.body.name).toEqual('OpenAPIUtilsError');
         expect(response.body.message).toEqual(
-          'Error in request: Schema Song should have required property \'title\'. You provide "{"invalidKey":"invalidKey"}"',
+          'Error in request: Schema Song must have required property \'title\'. You provide "{"invalidKey":"invalidKey"}"',
         );
       })
   ));
@@ -51,7 +51,7 @@ describe('Body request tests', () => {
       .then(response => {
         expect(response.body.name).toEqual('OpenAPIUtilsError');
         expect(response.body.message).toEqual(
-          'Error in request: Schema Song should have required property \'title\'. You provide "{"invalidKey":"invalidKey"}"',
+          'Error in request: Schema Song must have required property \'title\'. You provide "{"invalidKey":"invalidKey"}"',
         );
       })
   ));

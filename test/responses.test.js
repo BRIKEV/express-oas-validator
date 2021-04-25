@@ -15,7 +15,7 @@ describe('Responses tests', () => {
       .expect(500)
       .then(response => {
         expect(response.body.message).toEqual(
-          'Error in response: should be object. You provide "Error string"',
+          'Error in response: must be object. You provide "Error string"',
         );
       })
   ));
@@ -26,7 +26,7 @@ describe('Responses tests', () => {
       .expect(500)
       .then(response => {
         expect(response.body.message).toEqual(
-          'Error in response: Schema Song should be object. You provide "Error string"',
+          'Error in response: Schema Song must be object. You provide "Error string"',
         );
       })
   ));

@@ -28,7 +28,7 @@ describe('Path params tests', () => {
       .then(response => {
         expect(response.body.name).toEqual('OpenAPIUtilsError');
         expect(response.body.message).toEqual(
-          'Error in path: must be number. You provide "NaN"',
+          'Error in path: must be number. You provide "notNumber"',
         );
       })
   ));

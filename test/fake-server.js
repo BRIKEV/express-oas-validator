@@ -102,6 +102,19 @@ const serverApp = () => new Promise(resolve => {
   ));
 
   /**
+   * GET /api/v1/albums/{id}/songs/{songId}
+   * @summary This is the summary or description of the endpoint
+   * @param {string} id.path.required
+   * @param {number} songId.path.required
+   * @return {object} 200 - success response - application/json
+   */
+  app.get('/api/v1/albums/:id/songs/:songId', validateMiddleware(), (req, res) => (
+    res.json([{
+      title: 'abum 1',
+    }])
+  ));
+
+  /**
    * GET /api/v1/authors
    * @summary This is the summary or description of the endpoint
    * @param {string} name.query.required - name param description - enum:type1,type2

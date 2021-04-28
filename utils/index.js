@@ -1,5 +1,5 @@
 /** @module Utils */
-const filterUndefinedProps = require('./cleanObject');
+const filterUndefinedProps = require('./filterUndefinedProps');
 
 /**
  * This method get keys of a param object and filter them with exceptions

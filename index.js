@@ -5,6 +5,7 @@ const {
   getParameters,
   paramsArray,
   handleError,
+  filterUndefinedProps,
 } = require('./utils');
 const getConfig = require('./utils/config');
 
@@ -84,7 +85,10 @@ const responseValidation = (payload, req, status = 200) => {
       method,
       endpoint,
     } = getParameters(req);
-    return instance.validateResponse(payload, endpoint, method, status, contentType);
+
+    // Payload properties explicitly set to undefined will be excluded from validation
+    const cleanPayload = filterUndefinedProps(payload);
+    return instance.validateResponse(cleanPayload, endpoint, method, status, contentType);
   } catch (error) {
     error.status = 500;
     error.statusCode = 500;

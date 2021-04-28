@@ -1,4 +1,5 @@
 /** @module Utils */
+const filterUndefinedProps = require('./cleanObject');
 
 /**
  * This method get keys of a param object and filter them with exceptions
@@ -87,4 +88,5 @@ module.exports = {
   getParameters,
   paramsArray,
   handleError,
+  filterUndefinedProps,
 };

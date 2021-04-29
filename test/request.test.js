@@ -29,6 +29,14 @@ describe('Body request tests', () => {
       .expect(200)
   ));
 
+  it('should not throw error when content type contains additional options in request body', () => (
+    request
+      .post('/api/v1/songs')
+      .set('Content-Type', 'application/json; charset=utf-8')
+      .send({ title: 'valid title' })
+      .expect(200)
+  ));
+
   it('should throw error when request is not valid', () => (
     request
       .post('/api/v1/songs')

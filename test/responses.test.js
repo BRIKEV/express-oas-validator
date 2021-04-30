@@ -43,7 +43,7 @@ describe('Responses tests', () => {
       .expect(500)
       .then(response => {
         expect(response.body.message).toEqual(
-          'Error in response: Schema Song must NOT have additional properties. You provide "{"title":"abum 1","extra":"this prop should not be here"}"',
+          'Error in response: Schema Song must NOT have additional properties, invalid property "extra". You provide "{"title":"abum 1","extra":"this prop should not be here"}"',
         );
       })
   ));

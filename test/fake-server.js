@@ -99,7 +99,7 @@ const serverApp = () => new Promise(resolve => {
         title: 'abum 1',
         extra: undefined,
       };
-      responseValidation(payload, req, 200);
+      validateResponse(payload, req, 200);
       return res.json(payload);
     } catch (error) {
       return next(error);
@@ -116,7 +116,7 @@ const serverApp = () => new Promise(resolve => {
         title: 'abum 1',
         extra: 'this prop should not be here',
       };
-      responseValidation(payload, req, 200);
+      validateResponse(payload, req, 200);
       return res.json(payload);
     } catch (error) {
       return next(error);

@@ -26,7 +26,7 @@ This is a basic usage of this package.
 const express = require('express');
 // We recommed to install "body-parser" to validate request body
 const bodyParser = require('body-parser');
-const { init, validateMiddleware, responseValidation } = require('express-oas-validator');
+const { init, validateRequest, validateResponse } = require('express-oas-validator');
 const swaggerDefinition = require('./swaggerDefinition.json');
 
 const app = express();
@@ -36,17 +36,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Middleware validator
-app.post('/api/v1/songs', validateMiddleware(), (req, res) => res.send('You save a song!'));
+app.post('/api/v1/songs', validateRequest(), (req, res) => res.send('You save a song!'));
 
 // Middleware validator with custom configuration
-app.get('/api/v1/albums/:id', validateMiddleware({ headers: false }), (req, res) => (
+app.get('/api/v1/albums/:id', validateRequest({ headers: false }), (req, res) => (
   res.json([{
     title: 'abum 1',
   }])
 ));
 
 // Middleware validator with custom configuration
-app.get('/api/v1/authors', validateMiddleware({ body: false, query: false }), (req, res) => (
+app.get('/api/v1/authors', validateRequest({ body: false, query: false }), (req, res) => (
   res.json([{
     title: 'abum 1',
   }])
@@ -55,7 +55,7 @@ app.get('/api/v1/authors', validateMiddleware({ body: false, query: false }), (r
 // Response validator
 app.post('/api/v1/name', (req, res, next) => {
   try {
-    responseValidation('Error string', req, 200);
+    validateResponse('Error string', req, 200);
     return res.send('Hello World!');
   } catch (error) {
     return next(error);
@@ -72,7 +72,7 @@ app.use((err, req, res, next) => {
 
 ### init(openApiDef, options)
 
-This methods initiates the validator so that `validateMiddleware` and `responseValidation` can be used in different files.
+This methods initiates the validator so that `validateRequest` and `validateResponse` can be used in different files.
 
 **Parameters**
 
@@ -88,7 +88,7 @@ init(swaggerDefinition);
 ```
 
 
-## validateMiddleware(endpointConfig)
+## validateRequest(endpointConfig)
 
 
 Express middleware that receives this configuration options and validates each of the options.
@@ -108,21 +108,21 @@ const DEFAULT_CONFIG = {
 
 ```js
 // This one uses the DEFAULT_CONFIG
-app.get('/api/v1/albums/:id', validateMiddleware(), (req, res) => (
+app.get('/api/v1/albums/:id', validateRequest(), (req, res) => (
   res.json([{
     title: 'abum 1',
   }])
 ));
 
 // With custom configuration
-app.get('/api/v1/albums/:id', validateMiddleware({ headers: false }), (req, res) => (
+app.get('/api/v1/albums/:id', validateRequest({ headers: false }), (req, res) => (
   res.json([{
     title: 'abum 1',
   }])
 ));
 ```
 
-## responseValidation(payload, req, status)
+## validateResponse(payload, req, status)
 
 Method to validate response payload based on the docs and the status we want to validate.
 
@@ -138,7 +138,7 @@ Method to validate response payload based on the docs and the status we want to 
 **Example**
 
 ```js
-responseValidation('Error string', req, 200);
+validateResponse('Error string', req, 200);
 ```
 
 ## Example with express-jsdoc-swagger
@@ -148,7 +148,7 @@ This is an example using [express-jsdoc-swagger](https://www.npmjs.com/package/e
 ```js
 const express = require('express');
 const expressJSDocSwagger = require('express-jsdoc-swagger');
-const { init, validateMiddleware, responseValidation } = require('express-oas-validator');
+const { init, validateRequest, validateResponse } = require('express-oas-validator');
 
 const options = {
   info: {
@@ -187,7 +187,7 @@ const serverApp = () => new Promise(resolve => {
    * @param {Song} request.body.required - song info
    * @return {object} 200 - song response
    */
-  app.post('/api/v1/songs', validateMiddleware(), (req, res) => res.send('You save a song!'));
+  app.post('/api/v1/songs', validateRequest(), (req, res) => res.send('You save a song!'));
 
   /**
    * POST /api/v1/name
@@ -196,7 +196,7 @@ const serverApp = () => new Promise(resolve => {
    */
   app.post('/api/v1/name', (req, res, next) => {
     try {
-      responseValidation('Error string', req);
+      validateResponse('Error string', req);
       return res.send('Hello World!');
     } catch (error) {
       return next(error);
@@ -210,7 +210,7 @@ const serverApp = () => new Promise(resolve => {
    * @param {array<string>} license.query - name param description
    * @return {object} 200 - success response - application/json
    */
-  app.get('/api/v1/authors', validateMiddleware({ headers: false }), (req, res) => (
+  app.get('/api/v1/authors', validateRequest({ headers: false }), (req, res) => (
     res.json([{
       title: 'abum 1',
     }])

@@ -91,7 +91,8 @@ const responseValidation = (payload, req, status = 200) => {
     } = getParameters(req);
 
     // Payload properties explicitly set to undefined will be excluded from validation
-    const cleanPayload = filterUndefinedProps(payload);
+    const cleanPayload = (typeof payload === 'object' && payload !== null)
+      ? filterUndefinedProps(payload) : payload;
     return instance.validateResponse(cleanPayload, endpoint, method, status, contentType);
   } catch (error) {
     error.status = 500;

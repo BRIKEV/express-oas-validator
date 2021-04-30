@@ -43,7 +43,7 @@ const init = (openApiDef, options = {}) => {
  * Endpoint configuration
  * @param {EndpointConfig} endpointConfig middleware validator options
  */
-const validateMiddleware = endpointConfig => (req, res, next) => {
+const validateRequest = endpointConfig => (req, res, next) => {
   const config = getConfig(endpointConfig);
   try {
     const {
@@ -81,7 +81,7 @@ const validateMiddleware = endpointConfig => (req, res, next) => {
  * @param {object} req express request object
  * @param {number} status response status we want to validate
  */
-const responseValidation = (payload, req, status = 200) => {
+const validateResponse = (payload, req, status = 200) => {
   try {
     const {
       contentType,
@@ -96,4 +96,4 @@ const responseValidation = (payload, req, status = 200) => {
   }
 };
 
-module.exports = { init, validateMiddleware, responseValidation };
+module.exports = { init, validateRequest, validateResponse };

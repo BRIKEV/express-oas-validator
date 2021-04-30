@@ -1,3 +1,4 @@
+![npm](https://img.shields.io/npm/v/express-oas-validator)
 [![Build](https://github.com/BRIKEV/express-oas-validator/actions/workflows/runTests.yml/badge.svg)](https://github.com/BRIKEV/express-oas-validator/actions/workflows/runTests.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/BRIKEV/express-oas-validator/badge.svg)](https://snyk.io/test/github/BRIKEV/express-oas-validator)
 [![Maintainability](https://api.codeclimate.com/v1/badges/13aa6d75c21855b8857c/maintainability)](https://codeclimate.com/github/BRIKEV/express-oas-validator/maintainability)

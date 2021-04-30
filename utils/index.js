@@ -40,7 +40,8 @@ const formatURL = req => {
  * @param {object} req express request object
  */
 const getParameters = req => {
-  const contentType = req.headers['content-type'] || 'application/json';
+  const [contentType] = req.headers['content-type']
+    ? req.headers['content-type'].split(';') : ['application/json'];
   const method = req.method.toLowerCase();
   // eslint-disable-next-line no-underscore-dangle
   const endpoint = formatURL(req);

@@ -30,4 +30,21 @@ describe('Responses tests', () => {
         );
       })
   ));
+
+  it('should not throw error if response matches the schema', () => (
+    request
+      .get('/api/test/responses/valid')
+      .expect(200)
+  ));
+
+  it('should throw error if response has additional properties not defined in the schema', () => (
+    request
+      .get('/api/test/responses/extra-props')
+      .expect(500)
+      .then(response => {
+        expect(response.body.message).toEqual(
+          'Error in response: Schema Song must NOT have additional properties, invalid property "extra". You provide "{"title":"abum 1","extra":"this prop should not be here"}"',
+        );
+      })
+  ));
 });

@@ -1,6 +1,6 @@
 const express = require('express');
 const expressJSDocSwagger = require('express-jsdoc-swagger');
-const { init, validateMiddleware, responseValidation } = require('..');
+const { init, validateRequest, validateResponse } = require('..');
 
 const options = {
   info: {
@@ -40,20 +40,20 @@ const serverApp = () => new Promise(resolve => {
    * @param {Song} request.body.required - song info
    * @return {object} 200 - song response
    */
-  app.post('/api/v1/songs', validateMiddleware(), (req, res) => res.send('You save a song!'));
+  app.post('/api/v1/songs', validateRequest(), (req, res) => res.send('You save a song!'));
 
   /**
    * PATCH /api/v1/songs
    * @return {object} 200 - song response
    */
-  app.patch('/api/v1/songs', validateMiddleware(), (req, res) => res.send('You save a song!'));
+  app.patch('/api/v1/songs', validateRequest(), (req, res) => res.send('You save a song!'));
 
   /**
    * POST /api/v1/albums
    * @param {array<Song>} request.body.required
    * @return {object} 200 - song response
    */
-  app.post('/api/v1/albums', validateMiddleware({
+  app.post('/api/v1/albums', validateRequest({
     body: false,
     params: false,
     headers: false,
@@ -68,7 +68,7 @@ const serverApp = () => new Promise(resolve => {
    */
   app.post('/api/v1/name', (req, res, next) => {
     try {
-      responseValidation('Error string', req);
+      validateResponse('Error string', req);
       return res.send('Hello World!');
     } catch (error) {
       return next(error);
@@ -82,7 +82,7 @@ const serverApp = () => new Promise(resolve => {
    */
   app.post('/api/v2/name', (req, res, next) => {
     try {
-      responseValidation('Error string', req, 200);
+      validateResponse('Error string', req, 200);
       return res.send('Hello World!');
     } catch (error) {
       return next(error);
@@ -95,7 +95,7 @@ const serverApp = () => new Promise(resolve => {
    * @param {string} id.path.required
    * @return {object} 200 - success response - application/json
    */
-  app.get('/api/v1/albums/:id', validateMiddleware(), (req, res) => (
+  app.get('/api/v1/albums/:id', validateRequest(), (req, res) => (
     res.json([{
       title: 'abum 1',
     }])
@@ -108,7 +108,7 @@ const serverApp = () => new Promise(resolve => {
    * @param {number} songId.path.required
    * @return {object} 200 - success response - application/json
    */
-  app.get('/api/v1/albums/:id/songs/:songId', validateMiddleware(), (req, res) => (
+  app.get('/api/v1/albums/:id/songs/:songId', validateRequest(), (req, res) => (
     res.json([{
       title: 'abum 1',
     }])
@@ -121,7 +121,7 @@ const serverApp = () => new Promise(resolve => {
    * @param {array<string>} license.query - name param description
    * @return {object} 200 - success response - application/json
    */
-  app.get('/api/v1/authors', validateMiddleware(), (req, res) => (
+  app.get('/api/v1/authors', validateRequest(), (req, res) => (
     res.json([{
       title: 'abum 1',
     }])

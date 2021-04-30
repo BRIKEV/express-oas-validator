@@ -11,16 +11,17 @@ const getConfig = require('./utils/config');
 let instance = null;
 
 /**
- * Validator methods
- * @typedef {object} Options
- * @property {function()} errorHandler custom error handler
- * @property {object} ajvConfig Ajv config object
+ * Validator settings
+ * @typedef {object} ValidatorOptions
+ * @property {function} errorHandler - Custom error handler
+ * @property {object} ajvConfig - Ajv config object
  */
 
 /**
  * Init method to instantiate the OpenAPI validator
- * @param {object} openApiDef OpenAPI definition
- * @param {Options} options Options to extend the errorHandler or Ajv configuration
+ * @param {object} openApiDef - OpenAPI definition
+ * @param {ValidatorOptions} [options] - Options to extend the errorHandler or
+ *  Ajv configuration
  */
 const init = (openApiDef, options = {}) => {
   if (instance === null) {
@@ -30,18 +31,22 @@ const init = (openApiDef, options = {}) => {
 };
 
 /**
- * Validator methods
- * @typedef {object} EndpointConfig
- * @property {boolean} body custom error handler
- * @property {boolean} params Ajv config object
- * @property {boolean} headers Ajv config object
- * @property {boolean} query Ajv config object
- * @property {boolean} required Ajv config object
+ * Request validation configuration object
+ * @typedef {object} RequestValidationConfig
+ * @property {boolean} [body] - Indicates if request body will be validated
+ * @property {boolean} [params] - Indicates if path params will be validated
+ * @property {boolean} [headers] - Indicates if request headers will be validated
+ * @property {boolean} [query] - Indicates if query params will be validated
+ * @property {boolean} [required] - Indicates if required fields will be validated
  */
 
 /**
- * Endpoint configuration
- * @param {EndpointConfig} endpointConfig middleware validator options
+ * Validate data on the request complies with the schema specified in the open
+ * API definition object. By default, this validates path params, query params,
+ * headers and request body.
+ *
+ * @param {RequestValidationConfig} [endpointConfig] - Middleware validator
+ *  options, which will allow configuring which elements will be validated
  */
 const validateRequest = endpointConfig => (req, res, next) => {
   const config = getConfig(endpointConfig);
@@ -77,9 +82,9 @@ const validateRequest = endpointConfig => (req, res, next) => {
 
 /**
  * Method to validate response payload
- * @param {*} payload response we want to validate
- * @param {object} req express request object
- * @param {number} status response status we want to validate
+ * @param {*} payload - Response we want to validate
+ * @param {object} req - Express request object
+ * @param {number} [status] - Response status we want to validate
  */
 const validateResponse = (payload, req, status = 200) => {
   try {

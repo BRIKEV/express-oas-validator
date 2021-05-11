@@ -51,7 +51,7 @@
     "tui-jsdoc-template": "^1.2.2"
   },
   "dependencies": {
-    "openapi-validator-utils": "^1.1.4"
+    "openapi-validator-utils": "^1.1.5"
   },
   "jest": {
     "collectCoverageFrom": [

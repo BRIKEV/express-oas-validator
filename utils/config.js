@@ -7,6 +7,8 @@ const DEFAULT_CONFIG = {
   errorStatusCode: 400,
 };
 
+/** @module Utils/config */
+
 /**
  * @param {object} config
  */

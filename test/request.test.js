@@ -1,3 +1,4 @@
+const path = require('path');
 const supertest = require('supertest');
 const serverApp = require('./fake-server');
 
@@ -75,6 +76,13 @@ describe('Body request tests', () => {
     request
       .post('/api/v1/albums')
       .send({ title: 'valid title' })
+      .expect(200)
+  ));
+
+  it.only('should not throw error when we send the expected file', () => (
+    request
+      .post('/file-upload')
+      .attach('file', path.join(__dirname, 'mockFile.txt'))
       .expect(200)
   ));
 });

@@ -161,6 +161,19 @@ const serverApp = () => new Promise(resolve => {
     }])
   ));
 
+  /**
+   * File upload
+   * @typedef {object} File
+   * @property {string} file.required - file upload - binary
+   */
+
+  /**
+   * POSt /file-upload
+   * @param {File} request.body.required - song info - multipart/form-data
+   * @return {object} 200 - success response - application/json
+   */
+  app.post('/file-upload', validateRequest(), (req, res) => res.json({ success: true }));
+
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
     res.status(err.status).json(err);

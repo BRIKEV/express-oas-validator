@@ -51,6 +51,7 @@
     "tui-jsdoc-template": "^1.2.2"
   },
   "dependencies": {
+    "multiparty": "^4.2.2",
     "openapi-validator-utils": "^1.1.5"
   },
   "jest": {

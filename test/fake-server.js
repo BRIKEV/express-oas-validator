@@ -165,6 +165,7 @@ const serverApp = () => new Promise(resolve => {
    * File upload
    * @typedef {object} File
    * @property {string} file.required - file upload - binary
+   * @property {string} api_key.required - api key value
    */
 
   /**

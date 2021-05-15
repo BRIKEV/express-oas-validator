@@ -79,10 +79,24 @@ describe('Body request tests', () => {
       .expect(200)
   ));
 
-  it.only('should not throw error when we send the expected file', () => (
+  it('should not throw error when we send the expected file', () => (
+    request
+      .post('/file-upload')
+      .field('api_key', 'abcd')
+      .attach('file', path.join(__dirname, 'mockFile.txt'))
+      .expect(200)
+  ));
+
+  it('should throw error when we send invalid form param', () => (
     request
       .post('/file-upload')
       .attach('file', path.join(__dirname, 'mockFile.txt'))
-      .expect(200)
+      .expect(400)
+      .then(response => {
+        expect(response.body.name).toEqual('OpenAPIUtilsError');
+        expect(response.body.message).toMatch(
+          'Error in request: Schema File must have required property \'api_key\'.',
+        );
+      })
   ));
 });

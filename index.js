@@ -7,9 +7,11 @@ const {
   handleError,
   filterUndefinedProps,
 } = require('./utils');
+const { getFiles } = require('./utils/files');
 const getConfig = require('./utils/config');
 
 let instance = null;
+const FILES_CONTENT_TYPE = 'multipart/form-data';
 
 /**
  * Validator settings
@@ -49,7 +51,7 @@ const init = (openApiDef, options = {}) => {
  * @param {RequestValidationConfig} [endpointConfig] - Middleware validator
  *  options, which will allow configuring which elements will be validated
  */
-const validateRequest = endpointConfig => (req, res, next) => {
+const validateRequest = endpointConfig => async (req, res, next) => {
   const config = getConfig(endpointConfig);
   try {
     const {
@@ -69,7 +71,11 @@ const validateRequest = endpointConfig => (req, res, next) => {
       validateParams(req.query, queryKeys, instance.validateQueryParam);
     }
     if (instance.isRequestRequired(endpoint, method, contentType) && config.body) {
-      instance.validateRequest(requestBody, endpoint, method, contentType);
+      let payload = requestBody;
+      if (contentType === FILES_CONTENT_TYPE) {
+        payload = await getFiles(req);
+      }
+      instance.validateRequest(payload, endpoint, method, contentType);
     }
     if (config.headers) {
       const headersKeys = getKeys(req.headers);

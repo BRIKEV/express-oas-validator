@@ -72,6 +72,18 @@ describe('Body request tests', () => {
       .expect(200)
   ));
 
+  it('should not throw error when we do request to an internal route that\'s valid', () => (
+    request
+      .get('/api/birds')
+      .expect(200)
+  ));
+
+  it('should not throw error when request to an internal route with url params', () => (
+    request
+      .delete('/api/birds/1')
+      .expect(200)
+  ));
+
   it('should not throw error when middleware options are disabled', () => (
     request
       .post('/api/v1/albums')

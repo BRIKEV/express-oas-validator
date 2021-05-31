@@ -15,7 +15,7 @@ const DEFAULT_CONFIG = {
 const getConfig = config => {
   if (!config || Object.keys(config).length === 0) return DEFAULT_CONFIG;
   return {
-    DEFAULT_CONFIG,
+    ...DEFAULT_CONFIG,
     ...config,
   };
 };

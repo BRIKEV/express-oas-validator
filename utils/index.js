@@ -30,9 +30,13 @@ const paramsValidator = (endpoint, method) => (payload, keys, validate) => {
  */
 const formatURL = req => {
   const params = Object.keys(req.params);
+  let url = req.route.path;
+  if (req.baseUrl !== req.route.path) {
+    url = `${req.baseUrl}${req.route.path}`;
+  }
   return params.reduce((acum, param) => (
     acum.replace(`:${param}`, `{${param}}`)
-  ), req.route.path);
+  ), url);
 };
 
 /**

@@ -31,6 +31,17 @@ describe('Responses tests', () => {
       })
   ));
 
+  it('should throw error when internal route is not valid', () => (
+    request
+      .get('/api/birds/error-response')
+      .expect(500)
+      .then(response => {
+        expect(response.body.message).toEqual(
+          'Error in response: must be string. You provide "true"',
+        );
+      })
+  ));
+
   it('should not throw error if response matches the schema', () => (
     request
       .get('/api/test/responses/valid')

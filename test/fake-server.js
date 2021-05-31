@@ -1,6 +1,7 @@
 const express = require('express');
 const expressJSDocSwagger = require('express-jsdoc-swagger');
 const { init, validateRequest, validateResponse } = require('..');
+const internalRoutes = require('./internalRoutes/route');
 
 const options = {
   info: {
@@ -10,7 +11,7 @@ const options = {
       name: 'MIT',
     },
   },
-  filesPattern: './fake-server.js',
+  filesPattern: ['./fake-server.js', './internalRoutes/*.js'],
   baseDir: __dirname,
 };
 
@@ -26,6 +27,8 @@ const serverApp = () => new Promise(resolve => {
   // Add middleware to parse request body
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+
+  app.use('/api/birds', internalRoutes);
 
   /**
    * A song

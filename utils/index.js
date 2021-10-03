@@ -15,7 +15,8 @@ const getKeys = (paramObject, exceptions = []) => (
  * @param {string} endpoint
  * @param {string} method
  */
-const paramsValidator = (endpoint, method) => (payload, keys, validate) => {
+const paramsValidator = (endpoint, method) => (payload, validate) => {
+  const keys = getKeys(payload);
   keys.forEach(key => {
     validate(payload[key], key, endpoint, method);
   });

@@ -111,7 +111,7 @@ const validateResponse = instance => (payload, req, status = 200) => {
  *  Ajv configuration
  * @returns {ValidatorInstance} - Methods to validate the endpoints
  */
- const init = (openApiDef, options = {}) => {
+const init = (openApiDef, options = {}) => {
   const validatorInstance = openApiValidatorUtils(openApiDef, options);
 
   return {

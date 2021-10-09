@@ -14,7 +14,7 @@ This package will expose an express middleware that will validate your endpoint 
 ## Installation
 Install using the node package registry:
 
-```
+```bash
 npm install --save express-oas-validator
 ```
 
@@ -31,7 +31,7 @@ const swaggerDefinition = require('./swaggerDefinition.json');
 
 const app = express();
 
-// Each instance of the validator will provide two methods to use as middleware
+// Each instance of the validator will provide two methods to perform validation
 const { validateRequest, validateResponse } = init(swaggerDefinition);
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -70,9 +70,9 @@ app.use((err, req, res, next) => {
 });
 ```
 
-## Key methods
+## Methods
 
-### init(openApiDef, options)
+### _init(openApiDef, options)_
 
 This method generates a new instance of the validator, which will provide us with the `validateRequest` and `validateResponse` methods that we can use to validate the input and output of our endpoints.
 
@@ -81,43 +81,53 @@ It's possible to generate multiple instances using different API definitions and
 **Parameters**
 
 | Name        | Type   | Description        |
-| ------------|:------:| ------------------:|
-| openApiDef  | object | OpenAPI definition |
-| options     | object | Options to extend the errorHandler or Ajv configuration |
-
-```js
-const swaggerDefinition = require('./swaggerDefinition.json');
-
-// Each instance of the validator will provide two methods to use as middleware
-const { validateRequest, validateResponse } = init(swaggerDefinition);
-```
-
-## validateRequest(endpointConfig)
-
-Express middleware that receives this configuration options and validates each of the options.
-
-```js
-const DEFAULT_CONFIG = {
-  body: true,
-  params: true,
-  headers: true,
-  query: true,
-  required: true,
-  errorStatusCode: 400,
-};
-```
+| ------------| ------ | ------------------ |
+| openApiDef  | `object` | OpenAPI definition |
+| options     | `object` | Options to extend the errorHandler or Ajv configuration |
 
 **Example**
 
 ```js
-// This one uses the DEFAULT_CONFIG
+const swaggerDefinition = require('./swaggerDefinition.json');
+
+// Each instance of the validator will provide two methods to perform validation
+const { validateRequest, validateResponse } = init(swaggerDefinition);
+```
+
+### _validateRequest(config)_
+
+Express middleware that validates the input of the endpoint based on its definition. This includes the request body, headers, path params and query params.
+
+Optionally, the method can receive a parameter with a configuration object to override the defaults and determine which of these inputs we want the middleware to validate.
+
+**Parameters**
+
+| Name        | Type   | Description        |
+| ------------| ------ | ------------------ |
+| config  | `object` | Options to override the default configuration |
+
+**Configuration options**
+
+| Name        | Type   | Description        | Default value |
+| ------------| ------ | ------------------ | ------------- |
+| body | `boolean` | Indicates if request body will be validated | `true` |
+| params | `boolean` | Indicates if path params will be validated | `true` |
+| headers | `boolean` | Indicates if request headers will be validated | `true` |
+| query | `boolean` | Indicates if query params will be validated | `true` |
+| required | `boolean` | Indicates if required fields will be validated | `true` |
+| errorStatusCode | `number` | HTTP code that will be returned in case the input validation fails | `400` |
+
+**Example**
+
+```js
+// Use middleware with default settings
 app.get('/api/v1/albums/:id', validateRequest(), (req, res) => (
   res.json([{
     title: 'abum 1',
   }])
 ));
 
-// With custom configuration
+// Use middleware with custom settings
 app.get('/api/v1/albums/:id', validateRequest({ headers: false }), (req, res) => (
   res.json([{
     title: 'abum 1',
@@ -125,18 +135,17 @@ app.get('/api/v1/albums/:id', validateRequest({ headers: false }), (req, res) =>
 ));
 ```
 
-## validateResponse(payload, req, status)
+### _validateResponse(payload, req, status)_
 
 Method to validate response payload based on the docs and the status we want to validate.
 
 **Parameters**
 
 | Name        | Type   | Description        |
-| ------------|:------:| ------------------:|
-| payload     | *      | response we want to validate |
-| req         | object | Options to extend the errorHandler or Ajv configuration |
-| status      | number | esponse status we want to validate |
-
+| ------------| ------ | ------------------ |
+| payload     | `*`      | Response we want to validate |
+| req         | `object` | Options to extend the errorHandler or Ajv configuration |
+| status      | `number` | Response status we want to validate |
 
 **Example**
 

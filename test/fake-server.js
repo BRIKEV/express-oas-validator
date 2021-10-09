@@ -2,7 +2,7 @@ const express = require('express');
 const expressJSDocSwagger = require('express-jsdoc-swagger');
 const { init } = require('..');
 
-const addBaseRoutes = require('./internalRoutes/routes');
+const buildMiscRoutes = require('./internalRoutes/misc');
 const buildBirdRoutes = require('./internalRoutes/birds');
 
 const options = {
@@ -24,7 +24,7 @@ const serverApp = () => new Promise(resolve => {
   instance.on('finish', data => {
     const validatorInstance = init(data);
 
-    addBaseRoutes(app, validatorInstance);
+    app.use('/', buildMiscRoutes(validatorInstance));
     app.use('/api/birds', buildBirdRoutes(validatorInstance));
 
     // Add middleware to capture and return errors

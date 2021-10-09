@@ -1,4 +1,8 @@
-const addBaseRoutes = (app, { validateRequest, validateResponse }) => {
+const express = require('express');
+
+const buildMiscRoutes = ({ validateRequest, validateResponse }) => {
+  const router = express.Router();
+
   /**
    * A song
    * @typedef {object} Song
@@ -12,20 +16,20 @@ const addBaseRoutes = (app, { validateRequest, validateResponse }) => {
    * @param {Song} request.body.required - song info
    * @return {object} 200 - song response
    */
-  app.post('/api/v1/songs', validateRequest(), (req, res) => res.send('You save a song!'));
+  router.post('/api/v1/songs', validateRequest(), (req, res) => res.send('You save a song!'));
 
   /**
    * PATCH /api/v1/songs
    * @return {object} 200 - song response
    */
-  app.patch('/api/v1/songs', validateRequest(), (req, res) => res.send('You save a song!'));
+  router.patch('/api/v1/songs', validateRequest(), (req, res) => res.send('You save a song!'));
 
   /**
    * POST /api/v1/albums
    * @param {array<Song>} request.body.required
    * @return {object} 200 - song response
    */
-  app.post('/api/v1/albums', validateRequest({
+  router.post('/api/v1/albums', validateRequest({
     body: false,
     params: false,
     headers: false,
@@ -38,7 +42,7 @@ const addBaseRoutes = (app, { validateRequest, validateResponse }) => {
    * @param {string} request.body.required - name body description
    * @return {object} 200 - song response
    */
-  app.post('/api/v1/name', (req, res, next) => {
+  router.post('/api/v1/name', (req, res, next) => {
     try {
       validateResponse('Error string', req);
       return res.send('Hello World!');
@@ -52,7 +56,7 @@ const addBaseRoutes = (app, { validateRequest, validateResponse }) => {
    * @param {string} request.body.required - name body description
    * @return {Song} 200 - song response
    */
-  app.post('/api/v2/name', (req, res, next) => {
+  router.post('/api/v2/name', (req, res, next) => {
     try {
       validateResponse('Error string', req, 200);
       return res.send('Hello World!');
@@ -65,7 +69,7 @@ const addBaseRoutes = (app, { validateRequest, validateResponse }) => {
    * GET /api/test/responses/valid
    * @return {Song} 200 - song response
    */
-  app.get('/api/test/responses/valid', (req, res, next) => {
+  router.get('/api/test/responses/valid', (req, res, next) => {
     try {
       const payload = {
         title: 'abum 1',
@@ -82,7 +86,7 @@ const addBaseRoutes = (app, { validateRequest, validateResponse }) => {
    * GET /api/test/responses/extra-props
    * @return {Song} 200 - song response
    */
-  app.get('/api/test/responses/extra-props', (req, res, next) => {
+  router.get('/api/test/responses/extra-props', (req, res, next) => {
     try {
       const payload = {
         title: 'abum 1',
@@ -99,9 +103,9 @@ const addBaseRoutes = (app, { validateRequest, validateResponse }) => {
    * GET /api/v1/albums/{id}
    * @summary This is the summary or description of the endpoint
    * @param {string} id.path.required
-   * @return {object} 200 - success response - application/json
+   * @return {object} 200 - success response - routerlication/json
    */
-  app.get('/api/v1/albums/:id', validateRequest(), (req, res) => (
+  router.get('/api/v1/albums/:id', validateRequest(), (req, res) => (
     res.json([{
       title: 'abum 1',
     }])
@@ -112,9 +116,9 @@ const addBaseRoutes = (app, { validateRequest, validateResponse }) => {
    * @summary This is the summary or description of the endpoint
    * @param {string} id.path.required
    * @param {number} songId.path.required
-   * @return {object} 200 - success response - application/json
+   * @return {object} 200 - success response - routerlication/json
    */
-  app.get('/api/v1/albums/:id/songs/:songId', validateRequest(), (req, res) => (
+  router.get('/api/v1/albums/:id/songs/:songId', validateRequest(), (req, res) => (
     res.json([{
       title: 'abum 1',
     }])
@@ -125,9 +129,9 @@ const addBaseRoutes = (app, { validateRequest, validateResponse }) => {
    * @summary This is the summary or description of the endpoint
    * @param {string} name.query.required - name param description - enum:type1,type2
    * @param {array<string>} license.query - name param description
-   * @return {object} 200 - success response - application/json
+   * @return {object} 200 - success response - routerlication/json
    */
-  app.get('/api/v1/authors', validateRequest(), (req, res) => (
+  router.get('/api/v1/authors', validateRequest(), (req, res) => (
     res.json([{
       title: 'abum 1',
     }])
@@ -143,9 +147,11 @@ const addBaseRoutes = (app, { validateRequest, validateResponse }) => {
   /**
    * POSt /file-upload
    * @param {File} request.body.required - song info - multipart/form-data
-   * @return {object} 200 - success response - application/json
+   * @return {object} 200 - success response - routerlication/json
    */
-  app.post('/file-upload', validateRequest(), (req, res) => res.json({ success: true }));
+  router.post('/file-upload', validateRequest(), (req, res) => res.json({ success: true }));
+
+  return router;
 };
 
-module.exports = addBaseRoutes;
+module.exports = buildMiscRoutes;

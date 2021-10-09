@@ -26,12 +26,14 @@ This is a basic usage of this package.
 const express = require('express');
 // We recommed to install "body-parser" to validate request body
 const bodyParser = require('body-parser');
-const { init, validateRequest, validateResponse } = require('express-oas-validator');
+const { init } = require('express-oas-validator');
 const swaggerDefinition = require('./swaggerDefinition.json');
 
 const app = express();
 
-init(swaggerDefinition);
+// Each instance of the validator will provide two methods to use as middleware
+const { validateRequest, validateResponse } = init(swaggerDefinition);
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -68,11 +70,13 @@ app.use((err, req, res, next) => {
 });
 ```
 
-## methods
+## Key methods
 
 ### init(openApiDef, options)
 
-This methods initiates the validator so that `validateRequest` and `validateResponse` can be used in different files.
+This method generates a new instance of the validator, which will provide us with the `validateRequest` and `validateResponse` methods that we can use to validate the input and output of our endpoints.
+
+It's possible to generate multiple instances using different API definitions and / or configuration.
 
 **Parameters**
 
@@ -84,12 +88,11 @@ This methods initiates the validator so that `validateRequest` and `validateResp
 ```js
 const swaggerDefinition = require('./swaggerDefinition.json');
 
-init(swaggerDefinition);
+// Each instance of the validator will provide two methods to use as middleware
+const { validateRequest, validateResponse } = init(swaggerDefinition);
 ```
 
-
 ## validateRequest(endpointConfig)
-
 
 Express middleware that receives this configuration options and validates each of the options.
 
@@ -141,14 +144,14 @@ Method to validate response payload based on the docs and the status we want to 
 validateResponse('Error string', req, 200);
 ```
 
-## Example with express-jsdoc-swagger
+## Example with `express-jsdoc-swagger`
 
-This is an example using [express-jsdoc-swagger](https://www.npmjs.com/package/express-jsdoc-swagger).
+This is an example that uses this library together with [express-jsdoc-swagger](https://www.npmjs.com/package/express-jsdoc-swagger).
 
 ```js
 const express = require('express');
 const expressJSDocSwagger = require('express-jsdoc-swagger');
-const { init, validateRequest, validateResponse } = require('express-oas-validator');
+const { init } = require('express-oas-validator');
 
 const options = {
   info: {
@@ -167,59 +170,60 @@ const instance = expressJSDocSwagger(app)(options);
 
 const serverApp = () => new Promise(resolve => {
   instance.on('finish', data => {
-    init(data);
+    const { validateRequest, validateResponse } = init(data);
+
+    /**
+     * A song
+     * @typedef {object} Song
+     * @property {string} title.required - The title
+     * @property {string} artist - The artist
+     * @property {integer} year - The year
+     */
+
+    /**
+     * POST /api/v1/songs
+     * @param {Song} request.body.required - song info
+     * @return {object} 200 - song response
+     */
+    app.post('/api/v1/songs', validateRequest(), (req, res) => res.send('You save a song!'));
+
+    /**
+     * POST /api/v1/name
+     * @param {string} request.body.required - name body description
+     * @return {object} 200 - song response
+     */
+    app.post('/api/v1/name', (req, res, next) => {
+      try {
+        validateResponse('Error string', req);
+        return res.send('Hello World!');
+      } catch (error) {
+        return next(error);
+      }
+    });
+
+    /**
+     * GET /api/v1/authors
+     * @summary This is the summary or description of the endpoint
+     * @param {string} name.query.required - name param description - enum:type1,type2
+     * @param {array<string>} license.query - name param description
+     * @return {object} 200 - success response - application/json
+     */
+    app.get('/api/v1/authors', validateRequest({ headers: false }), (req, res) => (
+      res.json([{
+        title: 'abum 1',
+      }])
+    ));
+
+    // eslint-disable-next-line no-unused-vars
+    app.use((err, req, res, next) => {
+      res.status(err.status).json(err);
+    });
+
     resolve(app);
   });
 
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
-
-  /**
-   * A song
-   * @typedef {object} Song
-   * @property {string} title.required - The title
-   * @property {string} artist - The artist
-   * @property {integer} year - The year
-   */
-
-  /**
-   * POST /api/v1/songs
-   * @param {Song} request.body.required - song info
-   * @return {object} 200 - song response
-   */
-  app.post('/api/v1/songs', validateRequest(), (req, res) => res.send('You save a song!'));
-
-  /**
-   * POST /api/v1/name
-   * @param {string} request.body.required - name body description
-   * @return {object} 200 - song response
-   */
-  app.post('/api/v1/name', (req, res, next) => {
-    try {
-      validateResponse('Error string', req);
-      return res.send('Hello World!');
-    } catch (error) {
-      return next(error);
-    }
-  });
-
-  /**
-   * GET /api/v1/authors
-   * @summary This is the summary or description of the endpoint
-   * @param {string} name.query.required - name param description - enum:type1,type2
-   * @param {array<string>} license.query - name param description
-   * @return {object} 200 - success response - application/json
-   */
-  app.get('/api/v1/authors', validateRequest({ headers: false }), (req, res) => (
-    res.json([{
-      title: 'abum 1',
-    }])
-  ));
-
-  // eslint-disable-next-line no-unused-vars
-  app.use((err, req, res, next) => {
-    res.status(err.status).json(err);
-  });
 });
 
 module.exports = serverApp;

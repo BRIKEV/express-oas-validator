@@ -26,17 +26,19 @@ const serverApp = () => new Promise(resolve => {
 
     addBaseRoutes(app, validatorInstance);
     app.use('/api/birds', buildBirdRoutes(validatorInstance));
+
+    // Add middleware to capture and return errors
+    // eslint-disable-next-line no-unused-vars
+    app.use((err, req, res, next) => {
+      res.status(err.status).json(err);
+    });
+
     resolve(app);
   });
 
   // Add middleware to parse request body
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
-
-  // eslint-disable-next-line no-unused-vars
-  app.use((err, req, res, next) => {
-    res.status(err.status).json(err);
-  });
 });
 
 module.exports = serverApp;

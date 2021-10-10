@@ -1,6 +1,5 @@
 const openapiValidatorUtils = require('openapi-validator-utils');
 const {
-  getKeys,
   paramsValidator,
   getParameters,
   paramsArray,
@@ -58,18 +57,20 @@ const validateRequest = endpointConfig => async (req, res, next) => {
       contentType, method, endpoint, requestBody,
     } = getParameters(req);
     const validateParams = paramsValidator(endpoint, method);
+
     if (config.required) {
       const paramsToValidate = paramsArray(req);
       instance.validateRequiredValues(paramsToValidate, endpoint, method);
     }
+
     if (config.params) {
-      const paramKeys = getKeys(req.params);
-      validateParams(req.params, paramKeys, instance.validatePathParam);
+      validateParams(req.params, instance.validatePathParam);
     }
+
     if (config.query) {
-      const queryKeys = getKeys(req.query);
-      validateParams(req.query, queryKeys, instance.validateQueryParam);
+      validateParams(req.query, instance.validateQueryParam);
     }
+
     if (instance.isRequestRequired(endpoint, method, contentType) && config.body) {
       let payload = requestBody;
       if (contentType === FILES_CONTENT_TYPE) {
@@ -77,10 +78,11 @@ const validateRequest = endpointConfig => async (req, res, next) => {
       }
       instance.validateRequest(payload, endpoint, method, contentType);
     }
+
     if (config.headers) {
-      const headersKeys = getKeys(req.headers);
-      validateParams(req.headers, headersKeys, instance.validateHeaderParam);
+      validateParams(req.headers, instance.validateHeaderParam);
     }
+
     return next();
   } catch (error) {
     return handleError(error, config.errorStatusCode, next);

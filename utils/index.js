@@ -12,10 +12,22 @@ const getKeys = (paramObject, exceptions = []) => (
 );
 
 /**
- * @param {string} endpoint
- * @param {string} method
+ *  This method runs a validator function over a collection of parameters,
+ * defined as an object. That function will validate the received values
+ * against the schema defined for the specified endpoint.
+ *
+ * @param {string} endpoint - Route of the endpoint to which the param belongs
+ * @param {string} method - HTTP method of the endpoint (ex.: GET, POST...)
+ *
+ * @param {object} payload - Pairs of key - value items, where each key will
+ *  represent a parameter
+ * @param {function} validate - Method that will be used to perform the param
+ *  validation. Different param types (path param, query param...) will use
+ *  different validation methods. The used validation methods are currently
+ *  defined in the "openapi-validator-utils" project.
  */
-const paramsValidator = (endpoint, method) => (payload, keys, validate) => {
+const paramsValidator = (endpoint, method) => (payload, validate) => {
+  const keys = getKeys(payload);
   keys.forEach(key => {
     validate(payload[key], key, endpoint, method);
   });

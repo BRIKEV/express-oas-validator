@@ -1,4 +1,4 @@
-const openapiValidatorUtils = require('openapi-validator-utils');
+const openApiValidatorUtils = require('openapi-validator-utils');
 const {
   paramsValidator,
   getParameters,
@@ -9,7 +9,6 @@ const {
 const { getFiles } = require('./utils/files');
 const getConfig = require('./utils/config');
 
-let instance = null;
 const FILES_CONTENT_TYPE = 'multipart/form-data';
 
 /**
@@ -18,19 +17,6 @@ const FILES_CONTENT_TYPE = 'multipart/form-data';
  * @property {function} errorHandler - Custom error handler
  * @property {object} ajvConfig - Ajv config object
  */
-
-/**
- * Init method to instantiate the OpenAPI validator
- * @param {object} openApiDef - OpenAPI definition
- * @param {ValidatorOptions} [options] - Options to extend the errorHandler or
- *  Ajv configuration
- */
-const init = (openApiDef, options = {}) => {
-  if (instance === null) {
-    instance = openapiValidatorUtils(openApiDef, options);
-  }
-  return instance;
-};
 
 /**
  * Request validation configuration object
@@ -50,7 +36,7 @@ const init = (openApiDef, options = {}) => {
  * @param {RequestValidationConfig} [endpointConfig] - Middleware validator
  *  options, which will allow configuring which elements will be validated
  */
-const validateRequest = endpointConfig => async (req, res, next) => {
+const validateRequest = instance => endpointConfig => async (req, res, next) => {
   const config = getConfig(endpointConfig);
   try {
     const {
@@ -95,7 +81,7 @@ const validateRequest = endpointConfig => async (req, res, next) => {
  * @param {object} req - Express request object
  * @param {number} [status] - Response status we want to validate
  */
-const validateResponse = (payload, req, status = 200) => {
+const validateResponse = instance => (payload, req, status = 200) => {
   try {
     const {
       contentType,
@@ -114,4 +100,26 @@ const validateResponse = (payload, req, status = 200) => {
   }
 };
 
-module.exports = { init, validateRequest, validateResponse };
+/**
+ * @typedef {object} ValidatorInstance
+ * @property {function} validateRequest.required - Method to validate the request
+ * @property {function} validateResponse.required - Method to validate the response
+ */
+
+/**
+ * Init method to instantiate the OpenAPI validator
+ * @param {object} validateRequest - OpenAPI definition
+ * @param {ValidatorOptions} [options] - Options to extend the errorHandler or
+ *  Ajv configuration
+ * @returns {ValidatorInstance} - Methods to validate the endpoints
+ */
+const init = (openApiDef, options = {}) => {
+  const validatorInstance = openApiValidatorUtils(openApiDef, options);
+
+  return {
+    validateRequest: validateRequest(validatorInstance),
+    validateResponse: validateResponse(validatorInstance),
+  };
+};
+
+module.exports = { init };

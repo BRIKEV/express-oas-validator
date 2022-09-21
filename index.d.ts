@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { Options } from 'ajv';
 /**
  * Validator settings
  */
@@ -10,7 +11,7 @@ import { Request, Response, NextFunction } from 'express';
   /**
    * - Ajv config object
    */
-  ajvConfig: object;
+  ajvConfig: Options;
 };
 /**
 * Request validation configuration object
